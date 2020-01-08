@@ -13,7 +13,10 @@ class chat : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        supportActionBar?.title = "Chat"
+        val username = intent.getStringExtra(NewMessage.USER_KEY)
+        supportActionBar?.title = username
+
+
 
         val adapter = GroupAdapter<ViewHolder>()
         adapter.add(ChatfromItem())

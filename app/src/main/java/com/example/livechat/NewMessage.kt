@@ -33,6 +33,9 @@ class NewMessage : AppCompatActivity() {
 //        recycleview_chat.adapter = adapter
         getUsers()
     }
+    companion object{
+        val USER_KEY = "USER_KEY"
+    }
     private fun getUsers() {
         val ref = FirebaseDatabase.getInstance().getReference("/users")
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
@@ -47,7 +50,10 @@ class NewMessage : AppCompatActivity() {
                     }
                 }
                 adapter.setOnItemClickListener { item, view ->
+                    val userItem = item as UserItem
+
                     val intent = Intent(view.context, chat::class.java)
+                    intent.putExtra(USER_KEY,item.user.username)
                     startActivity(intent)
                 }
 
