@@ -6,6 +6,8 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.chat_from_row.view.*
+import kotlinx.android.synthetic.main.chat_too_row.view.*
 
 class chat : AppCompatActivity() {
 
@@ -17,8 +19,10 @@ class chat : AppCompatActivity() {
         val user = intent.getParcelableExtra<User>(NewMessage.USER_KEY)
         supportActionBar?.title = user.username
 
+        dummyData()
+    }
 
-
+    fun dummyData() {
         val adapter = GroupAdapter<ViewHolder>()
         adapter.add(ChatfromItem())
         adapter.add(ChattoItem())
@@ -35,7 +39,7 @@ class chat : AppCompatActivity() {
 
 class ChatfromItem: Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
-
+        viewHolder.itemView.textView_from_row.text = "asd"
     }
 
     override fun getLayout(): Int {
@@ -44,7 +48,7 @@ class ChatfromItem: Item<ViewHolder>(){
 }
 class ChattoItem: Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
-
+        viewHolder.itemView.textView_too_row.text = "asdasd"
     }
 
     override fun getLayout(): Int {
