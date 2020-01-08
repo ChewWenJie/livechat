@@ -3,10 +3,12 @@ package com.example.livechat
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -66,7 +68,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 }
-class User(val uid: String, val username: String) {
+@Parcelize
+class User(val uid: String, val username: String): Parcelable{
     constructor() : this("", "")
 }
 //class User(val uid: String, val username: String)

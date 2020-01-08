@@ -13,8 +13,9 @@ class chat : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        val username = intent.getStringExtra(NewMessage.USER_KEY)
-        supportActionBar?.title = username
+        //val username = intent.getStringExtra(NewMessage.USER_KEY)
+        val user = intent.getParcelableExtra<User>(NewMessage.USER_KEY)
+        supportActionBar?.title = user.username
 
 
 

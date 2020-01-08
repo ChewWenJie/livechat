@@ -50,10 +50,12 @@ class NewMessage : AppCompatActivity() {
                     }
                 }
                 adapter.setOnItemClickListener { item, view ->
+
                     val userItem = item as UserItem
 
                     val intent = Intent(view.context, chat::class.java)
-                    intent.putExtra(USER_KEY,item.user.username)
+                    //intent.putExtra(USER_KEY,item.user.username)
+                    intent.putExtra(USER_KEY, userItem.user)
                     startActivity(intent)
                 }
 
