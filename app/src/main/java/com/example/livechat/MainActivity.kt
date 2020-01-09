@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.letsbuildthatapp.kotlinmessenger.models.User
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -68,8 +69,5 @@ class MainActivity : AppCompatActivity() {
 
     }
 }
-@Parcelize
-class User(val uid: String, val username: String): Parcelable{
-    constructor() : this("", "")
-}
+
 //class User(val uid: String, val username: String)
