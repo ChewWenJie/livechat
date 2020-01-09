@@ -26,12 +26,6 @@ class NewMessage : AppCompatActivity() {
 
         supportActionBar?.title = "Select User"
 
-//        val adapter = GroupAdapter<ViewHolder>()
-//        adapter.add(UserItem())
-//        adapter.add(UserItem())
-//        adapter.add(UserItem())
-//
-//        recycleview_chat.adapter = adapter
         getUsers()
     }
     companion object{

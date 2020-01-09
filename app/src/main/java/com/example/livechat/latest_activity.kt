@@ -6,9 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.livechat.models.ChatMessage
 import com.example.livechat.models.User
+import com.example.livechat.view.LatestMessageRow
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.xwray.groupie.GroupAdapter
@@ -28,37 +29,29 @@ class latest_activity : AppCompatActivity() {
         setContentView(R.layout.activity_latest_activity)
 
         recyclerview_latest_messages.adapter = adapter
+        //add a vertical line only
+        recyclerview_latest_messages.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+
+        adapter.setOnItemClickListener { item, view ->
+            val intent = Intent(this, chat::class.java)
+
+            val row  = item as LatestMessageRow
+
+            intent.putExtra(NewMessage.USER_KEY, row.chatPartnerUser)
+            startActivity(intent)
+        }
+
 
         listenlatest()
         fetchCurrentUser()
         verifyUserLogged()
     }
 
-    class latestMessageRow(val chatMessage: ChatMessage): Item<ViewHolder>(){
-        override fun getLayout(): Int {
-            return R.layout.latest_message_row
-        }
-
-        override fun bind(viewHolder: ViewHolder, position: Int) {
-            viewHolder.itemView.txtView_latestmessages.text = chatMessage.text
-
-            val partId: String
-            if(chatMessage.fromId == FirebaseAuth.getInstance().uid){
-
-            } else {
-
-            }
-
-            viewHolder.itemView.txtview_latest.text = ""
-        }
-
-    }
-
     val latestMap = HashMap<String, ChatMessage>()
     fun refreshView(){
         adapter.clear()
         latestMap.values.forEach {
-            adapter.add(latestMessageRow(it))
+            adapter.add(LatestMessageRow(it))
         }
     }
 
@@ -67,25 +60,28 @@ class latest_activity : AppCompatActivity() {
         val reference = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
 
         reference.addChildEventListener(object : ChildEventListener{
-            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                val chatlatestmessage = p0.getValue(ChatMessage::class.java) ?: return
-                latestMap[p0.key!!] = chatlatestmessage
-                refreshView()
-                adapter.add(latestMessageRow(chatlatestmessage))
-            }
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatlatestmessage = p0.getValue(ChatMessage::class.java) ?: return
                 latestMap[p0.key!!] = chatlatestmessage
                 refreshView()
-                adapter.add(latestMessageRow(chatlatestmessage))
+
             }
-            override fun onCancelled(p0: DatabaseError) {
-            }
-            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            }
-            override fun onChildRemoved(p0: DataSnapshot) {
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                val chatlatestmessage = p0.getValue(ChatMessage::class.java) ?: return
+                latestMap[p0.key!!] = chatlatestmessage
+                refreshView()
+
             }
 
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+            }
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
         })
     }
 
