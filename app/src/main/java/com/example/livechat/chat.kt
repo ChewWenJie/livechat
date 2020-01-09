@@ -26,15 +26,17 @@ class chat : AppCompatActivity() {
 
     val adapter = GroupAdapter<ViewHolder>()
 
+    var toUser: User? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
         recyclerview_chat_log.adapter = adapter
 
-        val user = intent.getParcelableExtra<User>(NewMessage.USER_KEY)
+        toUser = intent.getParcelableExtra<User>(NewMessage.USER_KEY)
 
-        supportActionBar?.title = user.username
+        supportActionBar?.title = toUser?.username
 
         //dummyData()
         listenForMsg()
@@ -46,7 +48,9 @@ class chat : AppCompatActivity() {
 
 
     fun listenForMsg(){
-        val ref = FirebaseDatabase.getInstance().getReference("/messages")
+        val fromId = FirebaseAuth.getInstance().uid
+        val toId = toUser?.uid
+        val ref = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId")
         recyclerview_chat_log.adapter = adapter
 
         ref.addChildEventListener(object: ChildEventListener {
@@ -58,9 +62,10 @@ class chat : AppCompatActivity() {
                     Log.d(TAG, chatMessage.text)
 
                     if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
-                        adapter.add(ChatfromItem(chatMessage.text))
+                        val currentUser = latest_activity.currentUser ?: return
+                        adapter.add(ChattoItem(chatMessage.text, currentUser))
                     } else {
-                        adapter.add(ChattoItem(chatMessage.text))
+                        adapter.add(ChatfromItem(chatMessage.text, toUser!!))
                     }
               }
 
@@ -94,7 +99,8 @@ class chat : AppCompatActivity() {
 
         if (fromId == null) return
 
-        val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
+        //val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
+        val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
 
         val chatMessage = ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000)
         reference.setValue(chatMessage)
@@ -104,19 +110,19 @@ class chat : AppCompatActivity() {
     }
 
     fun dummyData() {
-        val adapter = GroupAdapter<ViewHolder>()
-        adapter.add(ChatfromItem("FROM MESSSSSSSSAAGE"))
-        adapter.add(ChattoItem("TO MESSAGE\nTOMESSAGE"))
-        adapter.add(ChatfromItem("FROM MESSSSSSSSAAGE"))
-        adapter.add(ChattoItem("TO MESSAGE\nTOMESSAGE"))
-        adapter.add(ChatfromItem("FROM MESSSSSSSSAAGE"))
-        adapter.add(ChattoItem("TO MESSAGE\nTOMESSAGE"))
-
-        recyclerview_chat_log.adapter = adapter
+//        val adapter = GroupAdapter<ViewHolder>()
+//        adapter.add(ChatfromItem("FROM MESSSSSSSSAAGE"))
+//        adapter.add(ChattoItem("TO MESSAGE\nTOMESSAGE"))
+//        adapter.add(ChatfromItem("FROM MESSSSSSSSAAGE"))
+//        adapter.add(ChattoItem("TO MESSAGE\nTOMESSAGE"))
+//        adapter.add(ChatfromItem("FROM MESSSSSSSSAAGE"))
+//        adapter.add(ChattoItem("TO MESSAGE\nTOMESSAGE"))
+//
+//        recyclerview_chat_log.adapter = adapter
     }
 }
 
-class ChatfromItem(val text:String): Item<ViewHolder>(){
+class ChatfromItem(val text:String, val user: User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textView_from_row.text = text
     }
@@ -125,7 +131,7 @@ class ChatfromItem(val text:String): Item<ViewHolder>(){
         return R.layout.chat_from_row
     }
 }
-class ChattoItem(val text:String): Item<ViewHolder>(){
+class ChattoItem(val text:String, val user: User): Item<ViewHolder>(){
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textView_too_row.text = text
     }
