@@ -58,6 +58,8 @@ class NewMessage : AppCompatActivity() {
                     //intent.putExtra(USER_KEY,item.user.username)
                     intent.putExtra(USER_KEY, userItem.user)
                     startActivity(intent)
+
+                    finish()
                 }
 
                 recycleview_chat.adapter = adapter
