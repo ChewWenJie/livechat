@@ -63,9 +63,9 @@ class chat : AppCompatActivity() {
 
                     if (chatMessage.fromId == FirebaseAuth.getInstance().uid) {
                         val currentUser = latest_activity.currentUser ?: return
-                        adapter.add(ChattoItem(chatMessage.text, currentUser))
+                        adapter.add(ChatfromItem(chatMessage.text, currentUser))
                     } else {
-                        adapter.add(ChatfromItem(chatMessage.text, toUser!!))
+                        adapter.add(ChattoItem(chatMessage.text, toUser!!))
                     }
               }
 
@@ -101,12 +101,16 @@ class chat : AppCompatActivity() {
 
         //val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
         val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
+        val toReference = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
 
         val chatMessage = ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000)
         reference.setValue(chatMessage)
             .addOnSuccessListener {
                 Log.d(TAG, "Saved our chat message: ${reference.key}")
+                edittxt_chat.text.clear()
+                recyclerview_chat_log.scrollToPosition(adapter.itemCount - 1)
             }
+        toReference.setValue(chatMessage)
     }
 
     fun dummyData() {

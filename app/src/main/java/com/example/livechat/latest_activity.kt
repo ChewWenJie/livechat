@@ -6,12 +6,17 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.letsbuildthatapp.kotlinmessenger.models.User
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
+import kotlinx.android.synthetic.main.activity_latest_activity.*
 
 class latest_activity : AppCompatActivity() {
 
@@ -21,9 +26,30 @@ class latest_activity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_latest_activity)
-
+        dummy()
         fetchCurrentUser()
         verifyUserLogged()
+    }
+
+    class latestMessageRow: Item<ViewHolder>(){
+        override fun getLayout(): Int {
+            return R.layout.latest_message_row
+        }
+
+        override fun bind(viewHolder: ViewHolder, position: Int) {
+
+        }
+
+    }
+
+    fun dummy(){
+        val adapter = GroupAdapter<ViewHolder>()
+
+        adapter.add(latestMessageRow())
+        adapter.add(latestMessageRow())
+        adapter.add(latestMessageRow())
+
+        recyclerview_latest_messages.adapter = adapter
     }
 
     fun fetchCurrentUser() {
