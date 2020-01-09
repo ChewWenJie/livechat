@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.widget.Toast
+import com.example.livechat.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.letsbuildthatapp.kotlinmessenger.models.User
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
 

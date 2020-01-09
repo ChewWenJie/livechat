@@ -9,14 +9,13 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.letsbuildthatapp.kotlinmessenger.models.User
+import com.example.livechat.models.User
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_too_row.view.*
-import java.sql.Timestamp
 
 class chat : AppCompatActivity() {
 
@@ -111,19 +110,14 @@ class chat : AppCompatActivity() {
                 recyclerview_chat_log.scrollToPosition(adapter.itemCount - 1)
             }
         toReference.setValue(chatMessage)
+
+        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
+        latestMessageRef.setValue(chatMessage)
+
+        val latestMessage2Ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
+        latestMessage2Ref.setValue(chatMessage)
     }
 
-    fun dummyData() {
-//        val adapter = GroupAdapter<ViewHolder>()
-//        adapter.add(ChatfromItem("FROM MESSSSSSSSAAGE"))
-//        adapter.add(ChattoItem("TO MESSAGE\nTOMESSAGE"))
-//        adapter.add(ChatfromItem("FROM MESSSSSSSSAAGE"))
-//        adapter.add(ChattoItem("TO MESSAGE\nTOMESSAGE"))
-//        adapter.add(ChatfromItem("FROM MESSSSSSSSAAGE"))
-//        adapter.add(ChattoItem("TO MESSAGE\nTOMESSAGE"))
-//
-//        recyclerview_chat_log.adapter = adapter
-    }
 }
 
 class ChatfromItem(val text:String, val user: User): Item<ViewHolder>(){
