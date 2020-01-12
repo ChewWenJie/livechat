@@ -50,7 +50,6 @@ class NewMessage : AppCompatActivity() {
                         if (user.uid != currentUser) {
                             adapter.add(UserItem(user))
                         }
-
                     }
                 }
                 adapter.setOnItemClickListener { item, view ->
@@ -67,7 +66,6 @@ class NewMessage : AppCompatActivity() {
 
                 recycleview_chat.adapter = adapter
             }
-
             override fun onCancelled(p0: DatabaseError) {
 
             }

@@ -3,6 +3,7 @@ package com.example.livechat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import com.example.livechat.models.ChatMessage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
@@ -34,6 +35,7 @@ class chat : AppCompatActivity() {
         toUser = intent.getParcelableExtra<User>(NewMessage.USER_KEY)
 
         supportActionBar?.title = toUser?.username
+
         recyclerview_chat_log.adapter = adapter
         listenForMsg()
 
@@ -87,35 +89,46 @@ class chat : AppCompatActivity() {
     }
     private fun performSendMessage() {
         // how do we actually send a message to firebase...
-        val text = edittxt_chat.text.toString()
+        val text = edittxt_chat.text.trim().toString()
 
         val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<User>(NewMessage.USER_KEY)
         val toId = user.uid
 
         if (fromId == null) return
-
 //    val reference = FirebaseDatabase.getInstance().getReference("/messages").push()
         val reference = FirebaseDatabase.getInstance().getReference("/user-messages/$fromId/$toId").push()
 
         val toReference = FirebaseDatabase.getInstance().getReference("/user-messages/$toId/$fromId").push()
 
         val chatMessage = ChatMessage(reference.key!!, text, fromId, toId, System.currentTimeMillis() / 1000)
+        if (text.isNotEmpty()) {
+            reference.setValue(chatMessage)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Saved our chat message: ${reference.key}")
+                    edittxt_chat.text.clear()
 
-        reference.setValue(chatMessage)
-            .addOnSuccessListener {
-                Log.d(TAG, "Saved our chat message: ${reference.key}")
-                edittxt_chat.text.clear()
-                recyclerview_chat_log.scrollToPosition(adapter.itemCount - 1)
-            }
+                    //position
+                    recyclerview_chat_log.scrollToPosition(adapter.itemCount - 1)
 
-        toReference.setValue(chatMessage)
 
-        val latestMessageRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId/$toId")
-        latestMessageRef.setValue(chatMessage)
+                    toReference.setValue(chatMessage)
 
-        val latestMessageToRef = FirebaseDatabase.getInstance().getReference("/latest-messages/$toId/$fromId")
-        latestMessageToRef.setValue(chatMessage)
+                    val latestMessageRef =
+                        FirebaseDatabase.getInstance()
+                            .getReference("/latest-messages/$fromId/$toId")
+                    chatMessage.toString().isNotEmpty().apply {
+                        latestMessageRef.setValue(chatMessage)
+                    }
+                    val latestMessageToRef =
+                        FirebaseDatabase.getInstance()
+                            .getReference("/latest-messages/$toId/$fromId")
+
+
+                    latestMessageToRef.setValue(chatMessage)
+//                    Toast.makeText(baseContext, chatMessage.toString(), Toast.LENGTH_LONG).show()
+                }
+        }
     }
 }
 

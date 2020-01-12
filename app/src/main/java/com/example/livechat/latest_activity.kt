@@ -41,7 +41,6 @@ class latest_activity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
         listenlatest()
         fetchCurrentUser()
         verifyUserLogged()
@@ -59,9 +58,11 @@ class latest_activity : AppCompatActivity() {
         val fromId = FirebaseAuth.getInstance().uid
         val reference = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
 
+
         reference.addChildEventListener(object : ChildEventListener{
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatlatestmessage = p0.getValue(ChatMessage::class.java) ?: return
+
                 latestMap[p0.key!!] = chatlatestmessage
                 refreshView()
 
